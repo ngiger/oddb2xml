@@ -294,6 +294,8 @@ module Oddb2xml
           if @options[:nonpharma] # into one file
             @_files[:dat] = "#{prefix}_with_migel.dat"
           end
+        elsif @options[:fi] == :fi
+          @_files = OPTIONALS
         else # xml
           ##
           # building order
@@ -301,7 +303,6 @@ module Oddb2xml
           #   2. subjects
           #   3. optionals
           _files = (ADDITIONS + SUBJECTS)
-          _files += OPTIONALS if @options[:fi]
           _files.each do|sbj|
             @_files[sbj] = "#{prefix}_#{sbj.to_s}.xml"
           end
