@@ -92,7 +92,6 @@ describe Oddb2xml::BagXmlDownloader do
   end
 end
 
-if false
 describe Oddb2xml::SwissIndexDownloader do
   include ServerMockHelper
   before(:each) do
@@ -106,14 +105,31 @@ describe Oddb2xml::SwissIndexDownloader do
     it_behaves_like 'any downloader'
     context 'when download_by is called with DE' do
       let(:xml) {
-        VCR.use_cassette("SwissIndex_DE") do
+        VCR.configure do |c|
+          c.before_record(:SwissIndex_DE) do |i|
+            stub_file = File.join(Oddb2xml::SpecData, "swissindex_Pharma_DE.xml")
+            unless /WSDL$/.match(i.request.uri)
+              puts "#{Time.now}: Parsing response.body (#{i.response.body.size} bytes) will take some time. URI was #{i.request.uri}"
+              doc = REXML::Document.new(i.response.body)
+              doc.root.children.first.elements.first.elements.size
+              items = doc.root.children.first.elements.first
+              puts "#{Time.now}: Removing most of the #{items.elements.size} items will take some time"
+              to_preserve = ['7680316440115', '7680353660163', '7680324750190']
+              items.elements.each{ |x| items.delete x unless x.elements['GTIN'] and to_preserve.index(x.elements['GTIN'].text) }
+              i.response.body = doc.to_s
+              puts "#{Time.now}: response.body is now #{i.response.body.size} bytes long"
+              i.response.headers['Content-Length'] = i.response.body.size
+            end
+          end
+        end
+        VCR.use_cassette("SwissIndex_DE", :tag => :SwissIndex_DE) do
           @downloader.download
         end
       }
       it 'should parse response hash to xml' do
         xml.should be_a String
         xml.length.should_not == 0
-        xml.should =~ /xml\sversion="1.0"/
+        xml.should =~ /xml\sversion=["']1.0["']/
       end
       it 'should return valid xml' do
         xml.should =~ /PHAR/
@@ -142,8 +158,9 @@ describe Oddb2xml::SwissIndexDownloader do
         xml.should =~ /ITEM/
       end
     end
-  end
+  end if false
 end
+if false
 
 describe Oddb2xml::SwissmedicDownloader do
   include ServerMockHelper

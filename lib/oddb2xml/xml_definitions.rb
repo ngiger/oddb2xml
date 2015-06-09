@@ -3,6 +3,8 @@
 
 require 'sax-machine'
 
+Strip_For_Sax_Machine = '<?xml version="1.0" encoding="utf-8"?>'+"\n"
+
 class PriceElement
   include SAXMachine
   element :Price
