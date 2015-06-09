@@ -27,10 +27,40 @@ def common_after
   Dir.chdir(@savedDir) if @savedDir and File.directory?(@savedDir)
 end
 
+describe Oddb2xml::EphaDownloader do
+  include ServerMockHelper
+  before(:each) do
+    @downloader = Oddb2xml::EphaDownloader.new
+    common_before
+  end
+  after(:each) do common_after end
+  it_behaves_like 'any downloader'
+  context 'when download is called' do
+    let(:csv) {
+      VCR.configure do |c|
+        c.before_record(:epha) do |i|
+          i.response.body = i.response.body.split("\n")[0..5].join("\n")
+          i.response.headers['Content-Length'] = i.response.body.size
+        end
+      end
+      VCR.use_cassette("Epha", :tag => :epha) do
+        @downloader.download
+      end
+    }
+    it 'should read csv as String' do
+      csv.should be_a String
+      csv.bytes.should_not nil
+    end
+    it 'should clean up current directory' do
+      expect { csv }.not_to raise_error
+      # File.exist?('epha_interactions.csv').should eq(false)
+    end
+  end
+end
+
 describe Oddb2xml::BagXmlDownloader do
   include ServerMockHelper
   before(:each) do
-    setup_bag_xml_server_mock
     @downloader = Oddb2xml::BagXmlDownloader.new
     common_before
   end
@@ -38,10 +68,21 @@ describe Oddb2xml::BagXmlDownloader do
   
   it_behaves_like 'any downloader'
   context 'when download is called' do
-    let(:xml) { @downloader.download }
+    let(:xml) {
+      VCR.configure do |c|
+        c.before_record(:bag_xml) do |i|
+          zip = File.read(File.join(Oddb2xml::SpecData, 'XMLPublications.zip'))
+          i.response.body = zip
+          i.response.headers['Content-Length'] = File.size(File.join(Oddb2xml::SpecData, 'XMLPublications.zip'))
+        end
+      end
+      VCR.use_cassette("bag", :tag => :bag_xml, :preserve_exact_body_bytes => true) do
+        @downloader.download
+      end
+    }
     it 'should parse zip to string' do
-      xml.should be_a String
-      xml.length.should_not == 0
+        xml.should be_a String
+        xml.length.should_not == 0
     end
     it 'should return valid xml' do
       xml.should =~ /xml\sversion="1.0"/
@@ -51,10 +92,10 @@ describe Oddb2xml::BagXmlDownloader do
   end
 end
 
+if false
 describe Oddb2xml::SwissIndexDownloader do
   include ServerMockHelper
   before(:each) do
-    setup_swiss_index_server_mock
     common_before
   end
   after(:each) do common_after end
@@ -64,7 +105,11 @@ describe Oddb2xml::SwissIndexDownloader do
     end
     it_behaves_like 'any downloader'
     context 'when download_by is called with DE' do
-      let(:xml) { @downloader.download }
+      let(:xml) {
+        VCR.use_cassette("SwissIndex_DE") do
+          @downloader.download
+        end
+      }
       it 'should parse response hash to xml' do
         xml.should be_a String
         xml.length.should_not == 0
@@ -82,7 +127,11 @@ describe Oddb2xml::SwissIndexDownloader do
     end
     it_behaves_like 'any downloader'
     context 'when download_by is called with FR' do
-      let(:xml) { @downloader.download }
+      let(:xml) {
+        VCR.use_cassette("SwissIndex_FR") do
+          @downloader.download
+        end
+      }
       it 'should parse response hash to xml' do
         xml.should be_a String
         xml.length.should_not == 0
@@ -100,14 +149,17 @@ describe Oddb2xml::SwissmedicDownloader do
   include ServerMockHelper
   context 'orphan' do
     before(:each) do
-      setup_swissmedic_server_mock
       @downloader = Oddb2xml::SwissmedicDownloader.new(:orphan)
       common_before
     end
     after(:each) do common_after end
     it_behaves_like 'any downloader'
     context 'download_by for orphan xls' do
-      let(:bin) { @downloader.download }
+      let(:bin) {
+        VCR.use_cassette("SwissMedic") do
+          @downloader.download
+        end
+      }
       it 'should return valid Binary-String' do
         unless [:orphan, :package].index(@downloader.type)
           bin.should be_a String
@@ -124,12 +176,15 @@ describe Oddb2xml::SwissmedicDownloader do
   end
   context 'fridge' do
     before(:each) do
-      setup_swissmedic_server_mock
       @downloader = Oddb2xml::SwissmedicDownloader.new(:fridge)
       common_before
     end
     context 'download_by for fridge xls' do
-      let(:bin) { @downloader.download }
+      let(:bin) {
+        VCR.use_cassette("SwissMedic") do
+          @downloader.download
+        end
+      }
       it 'should return valid Binary-String' do
         bin.should be_a String
         bin.bytes.should_not nil
@@ -138,7 +193,6 @@ describe Oddb2xml::SwissmedicDownloader do
   end
   context 'package' do
     before(:each) do
-      setup_swissmedic_server_mock
       @downloader = Oddb2xml::SwissmedicDownloader.new(:package)
     end
   end
@@ -147,14 +201,17 @@ end
 describe Oddb2xml::SwissmedicInfoDownloader do
   include ServerMockHelper
   before(:each) do
-    setup_swissmedic_info_server_mock
     @downloader = Oddb2xml::SwissmedicInfoDownloader.new
     common_before
   end
   after(:each) do common_after end
   it_behaves_like 'any downloader'
   context 'when download is called' do
-    let(:xml) { @downloader.download }
+    let(:xml) {
+      VCR.use_cassette("SwissmedicInfo") do
+        @downloader.download
+      end
+    }
     it 'should parse zip to String' do
       xml.should be_a String
       xml.length.should_not == 0
@@ -174,14 +231,17 @@ end
 describe Oddb2xml::EphaDownloader do
   include ServerMockHelper
   before(:each) do
-    setup_epha_server_mock
     @downloader = Oddb2xml::EphaDownloader.new
     common_before
   end
   after(:each) do common_after end
   it_behaves_like 'any downloader'
   context 'when download is called' do
-    let(:csv) { @downloader.download }
+    let(:csv) {
+      VCR.use_cassette("Epha") do
+        @downloader.download
+      end
+    }
     it 'should read csv as String' do
       csv.should be_a String
       csv.bytes.should_not nil
@@ -196,7 +256,6 @@ end
 describe Oddb2xml::BMUpdateDownloader do
   include ServerMockHelper
   before(:each) do
-    setup_bm_update_server_mock
     @downloader = Oddb2xml::BMUpdateDownloader.new
     common_before
   end
@@ -204,7 +263,11 @@ describe Oddb2xml::BMUpdateDownloader do
   
   it_behaves_like 'any downloader'
   context 'when download is called' do
-    let(:txt) { @downloader.download }
+    let(:txt) {
+      VCR.use_cassette("BMUpdate") do
+        @downloader.download
+      end
+    }
     it 'should read txt as String' do
       txt.should be_a String
       txt.bytes.should_not nil
@@ -219,7 +282,6 @@ end
 describe Oddb2xml::LppvDownloader do
   include ServerMockHelper
   before(:each) do
-    setup_lppv_server_mock
     @downloader = Oddb2xml::LppvDownloader.new
     common_before
   end
@@ -227,7 +289,11 @@ describe Oddb2xml::LppvDownloader do
   
   it_behaves_like 'any downloader'
   context 'when download is called' do
-    let(:txt) { @downloader.download }
+    let(:txt) {
+      VCR.use_cassette("Lppv") do
+        @downloader.download
+      end
+    }
     it 'should read txt as String' do
       txt.should be_a String
       txt.bytes.should_not nil
@@ -242,7 +308,6 @@ end
 describe Oddb2xml::MigelDownloader do
   include ServerMockHelper
   before(:each) do
-    setup_migel_server_mock
     @downloader = Oddb2xml::MigelDownloader.new
     common_before
   end
@@ -250,7 +315,11 @@ describe Oddb2xml::MigelDownloader do
   
   it_behaves_like 'any downloader'
   context 'when download is called' do
-    let(:bin) { @downloader.download }
+    let(:bin) {
+      VCR.use_cassette("Migel") do
+        @downloader.download
+      end
+    }
     it 'should read xls as Binary-String' do
       bin.should be_a String
       bin.bytes.should_not nil
@@ -271,12 +340,15 @@ describe Oddb2xml::MedregbmDownloader do
 
   context 'betrieb' do
     before(:each) do
-      setup_medregbm_server_mock
       @downloader = Oddb2xml::MedregbmDownloader.new(:company)
     end
     it_behaves_like 'any downloader'
     context 'download betrieb txt' do
-      let(:txt) { @downloader.download }
+      let(:txt) {
+        VCR.use_cassette("MedregbmBetrieb") do
+          @downloader.download
+        end
+      }
       it 'should return valid String' do
         txt.should be_a String
         txt.bytes.should_not nil
@@ -289,11 +361,14 @@ describe Oddb2xml::MedregbmDownloader do
   end
   context 'person' do
     before(:each) do
-      setup_medregbm_server_mock
       @downloader = Oddb2xml::MedregbmDownloader.new(:person)
     end
     context 'download person txt' do
-      let(:txt) { @downloader.download }
+      let(:txt) {
+        VCR.use_cassette("MedregbmPerson") do
+          @downloader.download
+        end
+      }
       it 'should return valid String' do
         txt.should be_a String
         txt.bytes.should_not nil
@@ -303,13 +378,12 @@ describe Oddb2xml::MedregbmDownloader do
         File.exist?('oddb_person.xls').should eq(false)
       end
     end
-  end
+  end  if false
 end
 
 describe Oddb2xml::ZurroseDownloader do
   include ServerMockHelper
   before(:each) do
-    setup_zurrose_server_mock
     @downloader = Oddb2xml::ZurroseDownloader.new
     common_before
   end
@@ -317,7 +391,11 @@ describe Oddb2xml::ZurroseDownloader do
   
   it_behaves_like 'any downloader'
   context 'when download is called' do
-    let(:dat) { @downloader.download }
+    let(:dat) {
+      VCR.use_cassette("Medregbm") do
+        @downloader.download
+      end
+    }
     it 'should read dat as String' do
       dat.should be_a String
       dat.bytes.should_not nil
@@ -327,4 +405,5 @@ describe Oddb2xml::ZurroseDownloader do
       File.exist?('oddb2xml_zurrose_transfer.dat').should eq(false)
     end
   end
+end
 end

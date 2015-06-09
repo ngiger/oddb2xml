@@ -55,6 +55,7 @@ module Oddb2xml
         cert_store.add_file(File.expand_path('../../../tools/cacert.pem', __FILE__))
         @agent.cert_store = cert_store
       end
+      @agent.verify_mode = OpenSSL::SSL::VERIFY_NONE
     end
     protected
     def retrievable?
