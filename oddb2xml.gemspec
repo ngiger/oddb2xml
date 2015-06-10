@@ -29,11 +29,13 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'rubyXL', '~> 3.3.1'
   spec.add_dependency 'sax-machine',  '~> 0.1.0'
   spec.add_dependency 'parslet', '~> 1.7.0'
-  
+
   spec.add_development_dependency "bundler"
   spec.add_development_dependency "rake"
   spec.add_development_dependency "rspec"
   spec.add_development_dependency "webmock"
   spec.add_development_dependency "rdoc"
+  spec.add_development_dependency "vcr"
+  spec.add_development_dependency "timecop"
 end
 

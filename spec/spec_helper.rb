@@ -12,7 +12,7 @@ require 'bundler/setup'
 Bundler.require
 
 require 'rspec'
-require 'webmock/rspec'
+# require 'webmock/rspec'
 require 'pp'
 
 begin # load pry if is available
@@ -21,13 +21,7 @@ rescue LoadError
 end
 
 require 'vcr'
-
-VCR.configure do |config|
-  config.cassette_library_dir = "fixtures/vcr_cassettes"
-  config.hook_into :webmock # or :fakeweb
-  # client_options[:verify_ssl] =  false
-
-end
+require 'timecop'
 
 module Oddb2xml
   # we override here a few directories to make input/output when running specs to
@@ -36,7 +30,53 @@ module Oddb2xml
   WorkDir        = File.join(File.dirname(__FILE__), 'run')
   Downloads      = File.join(WorkDir, 'downloads')
   SpecCompressor = File.join(Oddb2xml::SpecData, 'compressor')
+  GTINS_DRUGS = [ '733905577161',
+                  '7680536620137',
+                  '7680620690084', # needed for extractor_spec.rb
+                  '7680555580054',
+                  '7680316950157',
+                  '5000223439507',
+                  '5000223074777',
+                  '4042809018288',
+                  '4042809018400',
+                  '4042809018493',
+                  '7611600441013',
+                  '7611600441020',
+                  '7611600441037',
+                  ]
+
+  GTINS_MEDREG = [
+    7601001380028, # Glarus
+    7601002017145, # Kantonsspital Glarus AG
+    7601001395145, # Kantonstierärztlicher Dienst
+    7601001396043, # St. Fridolin Pharma AG
+    7601000159199, #  Davatz  Ursula
+    7601000159199, #  Davatz  Ursula
+    7601000254344, #  Pfister Daniel  8753  Mollis
+    7601000254207, #  Züst  Peter 8753  Mollis
+    7601000752314, #  Züst  Yvonne  8753  Mollis
+    ]
+
 end
+
+VCR.configure do |config|
+  config.cassette_library_dir = "spec/fixtures/vcr_cassettes"
+  config.hook_into :webmock # or :fakeweb
+  config.debug_logger = File.open(File.join(File.dirname(File.dirname(__FILE__)), 'vcr.log'), 'w+')
+  config.debug_logger.sync = true
+  config.default_cassette_options = { :record => :new_episodes,
+                                      :preserve_exact_body_bytes => true,
+                                      # :match_requests_on => [:uri, :method, :body, :headers]
+                                    }
+  config.before_http_request(:real?) do |request|
+    $stderr.puts("before real request: #{request.method} #{request.uri}")
+    $stderr.flush
+  end if false
+end
+VCR.use_cassette('oddb2xml') do |cassette|
+  Timecop.freeze(cassette.originally_recorded_at || Time.now)
+end if false
+VCR.insert_cassette('oddb2xml')
 
 AllCompositionLines = File.expand_path("#{__FILE__}/../data/compositions.txt")
 AllColumn_C_Lines = File.expand_path("#{__FILE__}/../data/column_c.txt")

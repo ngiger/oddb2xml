@@ -21,7 +21,7 @@ describe Oddb2xml::Calc do
   before(:each) do
     FileUtils.rm(Dir.glob(File.join(Oddb2xml::WorkDir, '*.xml')))
     FileUtils.rm(Dir.glob(File.join(Oddb2xml::WorkDir, '*.csv')))
-    setup_epha_atc_csv_mock
+    # setup_epha_atc_csv_mock
   end
 
   Line_1 = 'I) Glucoselösung: glucosum anhydricum 150 g ut glucosum monohydricum, natrii dihydrogenophosphas dihydricus 2.34 g, zinci acetas dihydricus 6.58 mg, aqua ad iniectabilia q.s. ad solutionem pro 500 ml.'

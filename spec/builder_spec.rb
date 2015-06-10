@@ -52,11 +52,7 @@ describe Oddb2xml::Builder do
     end
 
     it 'should return true when validating xml against oddb2xml.xsd' do
-      res = buildr_capture(:stdout){
-        VCR.use_cassette("cli", :erb => true) do
-          cli.run
-        end
-      }
+      res = buildr_capture(:stdout){ cli.run }
       File.exists?(@article_xml).should eq true
       File.exists?(@product_xml).should eq true
       check_validation_via_xsd

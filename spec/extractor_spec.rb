@@ -4,14 +4,20 @@ require 'spec_helper'
 require "#{Dir.pwd}/lib/oddb2xml/downloader"
 
 describe Oddb2xml::Extractor do
+  before(:all) { VCR.eject_cassette; VCR.insert_cassette('oddb2xml') }
+  after(:all) { VCR.eject_cassette }
   it "pending"
 end
 
 describe Oddb2xml::TxtExtractorMethods do
+  before(:all) { VCR.eject_cassette; VCR.insert_cassette('oddb2xml') }
+  after(:all) { VCR.eject_cassette }
   it "pending"
 end
 
 describe Oddb2xml::BagXmlExtractor do
+  before(:all) { VCR.eject_cassette; VCR.insert_cassette('oddb2xml') }
+  after(:all) { VCR.eject_cassette }
   context 'should handle articles with and without pharmacode' do
     subject do
       dat = File.read(File.join(Oddb2xml::SpecData, 'Preparations.xml'))
@@ -42,55 +48,64 @@ describe Oddb2xml::BagXmlExtractor do
 end
 
 describe Oddb2xml::SwissIndexExtractor do
+  before(:all) { VCR.eject_cassette; VCR.insert_cassette('oddb2xml') }
+  after(:all)  { VCR.eject_cassette }
   it "pending"
 end
 
 describe Oddb2xml::BMUpdateExtractor do
+  before(:all) { VCR.eject_cassette; VCR.insert_cassette('oddb2xml') }
+  after(:all) { VCR.eject_cassette }
   it "pending"
 end
 
 describe Oddb2xml::LppvExtractor do
+  before(:all) { VCR.eject_cassette; VCR.insert_cassette('oddb2xml') }
+  after(:all) { VCR.eject_cassette }
   it "pending"
 end
 
 describe Oddb2xml::SwissIndexExtractor do
+  before(:all) { VCR.eject_cassette; VCR.insert_cassette('oddb2xml') }
+  after(:all) { VCR.eject_cassette }
   it "pending"
 end
 
 describe Oddb2xml::MigelExtractor do
+  before(:all) { VCR.eject_cassette; VCR.insert_cassette('oddb2xml') }
+  after(:all) { VCR.eject_cassette }
   it "pending"
 end
 
 describe Oddb2xml::SwissmedicInfoExtractor do
-  before(:each) do
-    setup_epha_atc_csv_mock
-  end
-
+  before(:all) { VCR.eject_cassette; VCR.insert_cassette('oddb2xml') }
+  after(:all) { VCR.eject_cassette }
   context 'when transfer.dat is empty' do
     subject { Oddb2xml::SwissmedicInfoExtractor.new("") }
     it { expect(subject.to_hash).to be_empty }
   end
   context 'can parse swissmedic_package.xlsx' do
     it {
+        cleanup_directories_before_run
         filename = File.join(Oddb2xml::SpecData, 'swissmedic_package.xlsx')
         @packs = Oddb2xml::SwissmedicExtractor.new(filename, :package).to_hash
         expect(@packs.size).to eq(17)
         serocytol = nil
         @packs.each{|pack|
-                    serocytol = pack[1] if pack[0].to_s == '00274001'
+                    serocytol = pack[1] if pack[1][:ean] == '7680620690084'
                    }
-        expect(serocytol[:atc_code]).to eq('J06AA')
+        expect(serocytol[:atc_code]).to eq('N03AX14')
         expect(serocytol[:swissmedic_category]).to eq('B')
-        expect(serocytol[:package_size]).to eq('3')
-        expect(serocytol[:einheit_swissmedic]).to eq('Suppositorien')
-        expect(serocytol[:substance_swissmedic]).to eq('globulina equina (immunisé avec coeur, tissu pulmonaire, reins de porcins)')
+        expect(serocytol[:package_size]).to eq('30')
+        expect(serocytol[:einheit_swissmedic]).to eq('Tablette(n)')
+        expect(serocytol[:substance_swissmedic]).to eq('levetiracetamum')
       }
   end
   context 'can parse swissmedic_fridge.xlsx' do
     it {
         filename = File.join(Oddb2xml::SpecData, 'swissmedic_fridge.xlsx')
         @packs = Oddb2xml::SwissmedicExtractor.new(filename, :fridge).to_arry
-        expect(@packs.size).to eq(17)
+        expect(@packs.size >= 17).to eq true
         expect(@packs[0]).to eq("58618")
         expect(@packs[1]).to eq("00696")
       }
@@ -100,7 +115,7 @@ describe Oddb2xml::SwissmedicInfoExtractor do
         filename = File.join(Oddb2xml::SpecData, 'swissmedic_orphan.xlsx')
         expect(File.exists?(filename)).to eq(true), "File #{filename} must exists"
         @packs = Oddb2xml::SwissmedicExtractor.new(filename, :orphan).to_arry
-        expect(@packs.size).to eq(78)
+        expect(@packs.size >= 78).to eq true
         expect(@packs.first).to eq("62132")
         expect(@packs[7]).to eq("00687")
       }
@@ -108,6 +123,8 @@ describe Oddb2xml::SwissmedicInfoExtractor do
 end
 
 describe Oddb2xml::EphaExtractor do
+  before(:all) { VCR.eject_cassette; VCR.insert_cassette('oddb2xml') }
+  after(:all) { VCR.eject_cassette }
   context 'can parse epha_interactions.csv' do
     it {
         filename = File.join(Oddb2xml::SpecData, 'epha_interactions.csv')
@@ -119,10 +136,14 @@ describe Oddb2xml::EphaExtractor do
 end
 
 describe Oddb2xml::MedregbmExtractor do
+  before(:all) { VCR.eject_cassette; VCR.insert_cassette('oddb2xml') }
+  after(:all) { VCR.eject_cassette }
   it "pending"
 end
 
 describe Oddb2xml::ZurroseExtractor do
+  before(:all) { VCR.eject_cassette; VCR.insert_cassette('oddb2xml') }
+  after(:all) { VCR.eject_cassette }
 if false
   context 'when transfer.dat is empty' do
     subject { Oddb2xml::ZurroseExtractor.new("") }
