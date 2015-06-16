@@ -88,20 +88,23 @@ describe Oddb2xml::SwissmedicInfoExtractor do
     it {
         xml = @downloader.download
         @infos = Oddb2xml::SwissmedicInfoExtractor.new(xml).to_hash
-        expect(@infos.size).to eq(1)
-        erbiumcitrat = nil
+        expect(@infos.keys).to eq ['de', 'fr']
+        expect(@infos['de'].size).to eq 5
+        expect(@infos['fr'].size).to eq 2
+        levetiracetam = nil
         @infos['de'].each{|info|
-                    erbiumcitrat = info if /Erbiumcitrat/.match(info[:name])
+                    levetiracetam = info if /Levetiracetam/.match(info[:name])
                    }
-        expect(erbiumcitrat[:owner]).to eq('CBI Medical Products Vertriebs GmbH')
-        expect(erbiumcitrat[:paragraph].to_s).to match(/Packungen/)
-        expect(erbiumcitrat[:paragraph].to_s).to match(/Stand der Information/)
-        expect(erbiumcitrat[:paragraph].to_s).to match(/Zulassungsinhaberin/)
+        expect(levetiracetam[:owner]).to eq('Desitin Pharma GmbH')
+        expect(levetiracetam[:paragraph].to_s).to match(/Packungen/)
+        expect(levetiracetam[:paragraph].to_s).to match(/Zulassungsinhaberin/)
       }
   end
 end
 
 describe Oddb2xml::SwissmedicExtractor do
+  before(:all) { VCR.eject_cassette; VCR.insert_cassette('oddb2xml') }
+  after(:all) { VCR.eject_cassette }
   context 'when transfer.dat is empty' do
     subject { Oddb2xml::SwissmedicInfoExtractor.new("") }
     it { expect(subject.to_hash).to be_empty }

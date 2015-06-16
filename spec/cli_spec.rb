@@ -31,19 +31,16 @@ end
 describe Oddb2xml::Cli do
   # Setting ShouldRun to false and changing one -> if true allows you
   # to run easily the failing test
-  before(:all) do  VCR.eject_cassette; VCR.insert_cassette('oddb2xml') end
-  after(:all) do   VCR.eject_cassette end
   include ServerMockHelper
   before(:each) do
-VCR.eject_cassette; VCR.insert_cassette('oddb2xml')
-@savedDir = Dir.pwd
+    VCR.eject_cassette; VCR.insert_cassette('oddb2xml')
+    @savedDir = Dir.pwd
     cleanup_directories_before_run
     Dir.chdir(Oddb2xml::WorkDir)
   end
   after(:each) do
     Dir.chdir(@savedDir) if @savedDir and File.directory?(@savedDir)
     cleanup_compressor
-    VCR.eject_cassette; 
   end
   context 'when -c tar.gz option is given' do
     let(:cli) do
@@ -52,9 +49,8 @@ VCR.eject_cassette; VCR.insert_cassette('oddb2xml')
       Oddb2xml::Cli.new(options.opts)
     end
     it 'should not create any xml file' do
-      cli.run
-#      buildr_capture(:stdout) { cli.run }.should match(/Pharma/)
-      Dir.glob(File.join(Oddb2xml::WorkDir, 'oddb_*.xml')).each do |file|
+        buildr_capture(:stdout) { cli.run }.should match(/Pharma/)
+        Dir.glob(File.join(Oddb2xml::WorkDir, 'oddb_*.xml')).each do |file|
         File.exists?(file).should be_false
       end
     end

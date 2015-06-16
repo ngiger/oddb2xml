@@ -36,6 +36,7 @@ describe Oddb2xml::Builder do
     @savedDir = Dir.pwd
     cleanup_directories_before_run
     Dir.chdir Oddb2xml::WorkDir
+    VCR.eject_cassette; VCR.insert_cassette('oddb2xml')
   end
   after(:each) do
     Dir.chdir @savedDir if @savedDir and File.directory?(@savedDir)
@@ -60,7 +61,7 @@ describe Oddb2xml::Builder do
       m = /<paragraph><!\[CDATA\[(.+)\n(.*)/.match(inhalt.to_s)
       m[1].should eq '<?xml version="1.0" encoding="utf-8"?><div xmlns="http://www.w3.org/1999/xhtml">'
       expected = '<p class="s2"> </p>'
-      m[2].should eq '<p class="s2"> </p>'
+      m[2].should eq '<p class="s4" id="section1"><span class="s2"><span>Zyvoxid</span></span><sup class="s3"><span>®</span></sup></p>'
       File.exists?(@oddb_fi_product_xml).should eq true
       inhalt = IO.read(@oddb_fi_product_xml)
       skip "Niklaus does not know how to create a valid oddb_fi_product.xml"
@@ -70,16 +71,13 @@ describe Oddb2xml::Builder do
 
   context 'XSD-generation: ' do
     let(:cli) do
-      pp Oddb2xml::WorkDir
-      pp Dir.glob("#{Oddb2xml::WorkDir}/**")
-#      binding.pry
-        opts = {}
-        @oddb2xml_xsd = File.expand_path(File.join(File.dirname(__FILE__), '..', 'oddb2xml.xsd'))
-        @article_xml  = File.expand_path(File.join(Oddb2xml::WorkDir, 'oddb_article.xml'))
-        @product_xml  = File.expand_path(File.join(Oddb2xml::WorkDir, 'oddb_product.xml'))
-        options = Oddb2xml::Options.new
-        options.parser.parse!([])
-        Oddb2xml::Cli.new(options.opts)
+      opts = {}
+      @oddb2xml_xsd = File.expand_path(File.join(File.dirname(__FILE__), '..', 'oddb2xml.xsd'))
+      @article_xml  = File.expand_path(File.join(Oddb2xml::WorkDir, 'oddb_article.xml'))
+      @product_xml  = File.expand_path(File.join(Oddb2xml::WorkDir, 'oddb_product.xml'))
+      options = Oddb2xml::Options.new
+      options.parser.parse!([])
+      Oddb2xml::Cli.new(options.opts)
     end
 
     it 'should return true when validating xml against oddb2xml.xsd' do
@@ -90,7 +88,7 @@ describe Oddb2xml::Builder do
       check_validation_via_xsd
     end
   end
-if false
+if true
   context 'should handle BAG-articles with and without pharmacode' do
     it {
       dat = File.read(File.expand_path('../data/Preparations.xml', __FILE__))
@@ -555,7 +553,7 @@ if false
       else
         price_reseller.should eq     718  # this is a non  SL-product, but no price increase was requested
         line[66..71].should eq '000718' # the dat format requires leading zeroes and not point
-      end if false
+      end # if false
       line[60..65].should eq '000718' # the dat format requires leading zeroes and not point
       price_exf.should eq    718      # this is a non  SL-product, but no price increase was requested
     end

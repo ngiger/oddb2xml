@@ -1,9 +1,5 @@
 # encoding: utf-8
 
-begin
-require 'pry'
-rescue LoadError
-end
 require 'pp'
 require 'spec_helper'
 require "rexml/document"
