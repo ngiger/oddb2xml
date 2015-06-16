@@ -680,7 +680,7 @@ module Oddb2xml
                 $stdout.flush
             end
             no8                 = sprintf('%05d',row.cells[0].value.to_i) + sprintf('%03d',row.cells[10].value.to_i)
-            name                = row.cells[2].value
+            name                = row.cells[2]  ? row.cells[2].value  : nil
             atc_code            = row.cells[5]  ? row.cells[5].value  : nil
             list_code           = row.cells[6]  ? row.cells[6].value  : nil
             package_size        = row.cells[11] ? row.cells[11].value : nil
@@ -691,8 +691,12 @@ module Oddb2xml
             # skip veterinary product
             next if atc_code  and /^Q/i.match(atc_code)
             next if list_code and /Tierarzneimittel/.match(list_code)
-
-            info = Calc.new(name, package_size, unit, active_substance, composition)
+            begin
+              info = Calc.new(name, package_size, unit, active_substance, composition)
+            rescue
+              puts "#{Time.now}: #{row_nr} iksnr #{iksnr} rescue from Calc.new"
+              info = nil
+            end
             ean12 = '7680' + no8
             ean13 = (ean12 + Oddb2xml.calc_checksum(ean12))
             items[ean13] = info
@@ -724,7 +728,7 @@ module Oddb2xml
                   }
                 }
               }
-            } if info.compositions
+            } if info and info.compositions
           end
         }
       end
@@ -961,13 +965,14 @@ module Oddb2xml
                 'DT'      => ''
               ) {
                 unless info[:name].empty?
-                  xml.name  { xml.p(info[:name]) }
+                  xml.name info[:name]
                 end
                 unless info[:owner].empty?
-                  xml.owner { xml.p(info[:owner]) }
+                  xml.owner info[:owner]
                 end
                 xml.monid     info[:monid]                    unless info[:monid].empty?
-                xml.paragraph { xml.cdata(info[:paragraph]) } unless info[:paragraph].empty?
+                xml.style { xml.cdata(info[:style]) } if info[:style]
+                xml.paragraph { xml.cdata(Nokogiri::HTML.fragment(info[:paragraph].to_html).to_html(:encoding => 'UTF-8')) } if info[:paragraph]
               }
             end
           end
@@ -993,21 +998,27 @@ module Oddb2xml
             @infos[lang].each_with_index do |info, i|
               info_index[info[:monid]] = i
             end
-          end
-          @products.group_by{|obj| obj[:ean] 
-          }.each_pair do |monid, products|
-            if info_index[monid]
-              xml.KP('DT' => '') {
-                xml.MONID monid
-                products.each do |obj|
-                  xml.GTIN obj[:ean]
-                  length += 1
-                end
-                # as orphans ?
-                xml.DEL(@orphans.include?(monid) ? true : false)
-              }
+            # prod
+            @products.each do |prod|
+              next unless  prod[:seq] and prod[:seq][:packages]
+              seq = prod[:seq]
+              prod[:seq][:packages].each {
+                                          |phar, package|
+                                         next unless package[:swissmedic_number8]
+                                         m  = /(\d{5})(\d{3})/.match(package[:swissmedic_number8])
+                                         next unless m
+                                         number = m[1].to_s
+                                         idx = info_index[number]
+                                         next unless idx
+                                         xml.KP('DT' => '') {
+                                          xml.MONID @infos[lang][idx][:monid]
+                                          xml.PRDNO seq[:product_key] unless seq[:product_key].empty?
+                                          # as orphans ?
+                                          xml.DEL   @orphans.include?(number) ? true : false
+                                        }
+                  }
+              end
             end
-          end
           xml.RESULT {
             xml.OK_ERROR   'OK'
             xml.NBR_RECORD length

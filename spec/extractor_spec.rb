@@ -80,6 +80,28 @@ end
 describe Oddb2xml::SwissmedicInfoExtractor do
   before(:all) { VCR.eject_cassette; VCR.insert_cassette('oddb2xml') }
   after(:all) { VCR.eject_cassette }
+  include ServerMockHelper
+  before(:each) do
+    @downloader = Oddb2xml::SwissmedicInfoDownloader.new
+  end
+  context 'builds fachfinfo' do
+    it {
+        xml = @downloader.download
+        @infos = Oddb2xml::SwissmedicInfoExtractor.new(xml).to_hash
+        expect(@infos.size).to eq(1)
+        erbiumcitrat = nil
+        @infos['de'].each{|info|
+                    erbiumcitrat = info if /Erbiumcitrat/.match(info[:name])
+                   }
+        expect(erbiumcitrat[:owner]).to eq('CBI Medical Products Vertriebs GmbH')
+        expect(erbiumcitrat[:paragraph].to_s).to match(/Packungen/)
+        expect(erbiumcitrat[:paragraph].to_s).to match(/Stand der Information/)
+        expect(erbiumcitrat[:paragraph].to_s).to match(/Zulassungsinhaberin/)
+      }
+  end
+end
+
+describe Oddb2xml::SwissmedicExtractor do
   context 'when transfer.dat is empty' do
     subject { Oddb2xml::SwissmedicInfoExtractor.new("") }
     it { expect(subject.to_hash).to be_empty }
@@ -144,7 +166,6 @@ end
 describe Oddb2xml::ZurroseExtractor do
   before(:all) { VCR.eject_cassette; VCR.insert_cassette('oddb2xml') }
   after(:all) { VCR.eject_cassette }
-if false
   context 'when transfer.dat is empty' do
     subject { Oddb2xml::ZurroseExtractor.new("") }
     it { expect(subject.to_hash).to be_empty }
@@ -221,11 +242,10 @@ if false
       DAT
       Oddb2xml::ZurroseExtractor.new(dat, true)
     end
-    #it { expect(subject.to_hash.keys.first).to eq("7680316950157") }
+    it { expect(subject.to_hash.keys.first).to eq("0000008807890") }
     it "should set the correct SALECD cmut code" do expect(subject.to_hash.values.first[:cmut]).to eq("2") end
-    it "should set the correct SALECD description" do expect(subject.to_hash.values.first[:description]).to eq("Ethacridin lactat 1 100ml") end
-  end if false
-end
+    it "should set the correct SALECD description" do expect(subject.to_hash.values.first[:description]).to match(/Ethacridin lactat 1.+ 100ml/) end
+  end
   context 'when parsing examples' do
     subject do
       filename = File.expand_path(File.join(__FILE__, '..', 'data', 'zurrose_transfer.dat'))
@@ -248,7 +268,5 @@ end
           }
 
   end
-
-
 
 end
