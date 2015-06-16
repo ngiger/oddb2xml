@@ -42,6 +42,9 @@ describe Oddb2xml::Builder do
   end
   context 'XSD-generation: ' do
     let(:cli) do
+      pp Oddb2xml::WorkDir
+      pp Dir.glob("#{Oddb2xml::WorkDir}/**")
+#      binding.pry
         opts = {}
         @oddb2xml_xsd = File.expand_path(File.join(File.dirname(__FILE__), '..', 'oddb2xml.xsd'))
         @article_xml  = File.expand_path(File.join(Oddb2xml::WorkDir, 'oddb_article.xml'))
@@ -52,7 +55,8 @@ describe Oddb2xml::Builder do
     end
 
     it 'should return true when validating xml against oddb2xml.xsd' do
-      res = buildr_capture(:stdout){ cli.run }
+      # res = buildr_capture(:stdout){ cli.run }
+      cli.run
       File.exists?(@article_xml).should eq true
       File.exists?(@product_xml).should eq true
       check_validation_via_xsd

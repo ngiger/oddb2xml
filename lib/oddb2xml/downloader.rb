@@ -34,7 +34,7 @@ module Oddb2xml
     end
   end
   class Downloader
-    attr_reader :type
+    attr_reader :type, :agent
     def initialize(options={}, url=nil)
       @options     = options
       @url         = url
@@ -283,11 +283,14 @@ XML
       begin
         FileUtils.rm(File.expand_path(file), :verbose => !defined?(RSpec)) if File.exists?(File.expand_path(file))
         page = @agent.get(@url)
-        if link_node = page.search(@xpath).first
+        binding.pry unless page.respond_to?(:search)
+        if !page.class.is_a?(String) and link_node = page.search(@xpath).first
           link = Mechanize::Page::Link.new(link_node, @agent, page)
           response = link.click
           response.save_as(file)
           response = nil # win
+        else
+          binding.pry
         end
         return File.expand_path(file)
       rescue Timeout::Error, Errno::ETIMEDOUT

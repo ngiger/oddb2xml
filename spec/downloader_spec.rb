@@ -61,12 +61,15 @@ end
 
 describe Oddb2xml::SwissmedicDownloader do
   include ServerMockHelper
+  before(:all) do VCR.eject_cassette end
   before(:each) do
     VCR.configure do |c|
       c.before_record(:swissmedic) do |i|
         if i.response.headers['Content-Disposition'] and /www.swissmedic.ch/.match(i.request.uri)
+          puts "#{Time.now}: URI was #{i.request.uri}"
+          pp i.response.headers
           m = /filename=.([^\d]+)/.match(i.response.headers['Content-Disposition'][0])
-          puts "#{Time.now}: SwissmedicDownloader #{m[1]} (#{i.response.body.size} bytes). URI was #{i.request.uri}"
+          puts "#{Time.now}: SwissmedicDownloader #{m[1]} (#{i.response.body.size} bytes)."
           # binding.pry
           if m and true
             name = m[1].chomp('_')
@@ -168,8 +171,10 @@ describe Oddb2xml::SwissmedicDownloader do
   end
 end
 if true
+
 describe Oddb2xml::EphaDownloader do
   include ServerMockHelper
+  before(:all) do VCR.eject_cassette end
   before(:each) do
     VCR.configure do |c|
       c.before_record(:epha) do |i|
@@ -188,8 +193,10 @@ describe Oddb2xml::EphaDownloader do
     common_after
   end
   it_behaves_like 'any downloader'
+
   context 'when download is called' do
     let(:csv) {
+      Oddb2xml.add_epha_changes_for_ATC(1, 3)
       @downloader.download
     }
     it 'should read csv as String' do
@@ -205,6 +212,7 @@ end
 
 describe Oddb2xml::BMUpdateDownloader do
   include ServerMockHelper
+  before(:all) do VCR.eject_cassette end
   before(:each) do
     @downloader = Oddb2xml::BMUpdateDownloader.new
     VCR.insert_cassette('oddb2xml', :tag => :BMUpdate)
@@ -232,7 +240,8 @@ end
 
 describe Oddb2xml::BagXmlDownloader do
   include ServerMockHelper
-  before(:all) do
+  before(:all) do VCR.eject_cassette end
+  before(:all) {
     VCR.configure do |c|
       c.before_record(:bag_xml) do |i|
         if i.response.headers['Content-Disposition'] and /XMLPublications.zip/.match(i.request.uri)
@@ -257,11 +266,12 @@ describe Oddb2xml::BagXmlDownloader do
         end
       end
     end
-    VCR.use_cassette('oddb2xml', :tag => :bag_xml) do
+      VCR.eject_cassette
+      VCR.use_cassette('oddb2xml', :tag => :bag_xml) do
       @downloader = Oddb2xml::BagXmlDownloader.new
     end
     common_before
-  end
+  }
   after(:each) do
     common_after
   end
@@ -287,6 +297,7 @@ end
 
 describe Oddb2xml::SwissIndexDownloader do
   include ServerMockHelper
+  before(:all) do VCR.eject_cassette end
   before(:each) do
     VCR.configure do |c|
       c.before_record(:SwissIndex_DE) do |i|
@@ -351,6 +362,7 @@ end
 
 describe Oddb2xml::LppvDownloader do
   include ServerMockHelper
+  before(:all) do VCR.eject_cassette end
   before(:each) do
     @downloader = Oddb2xml::LppvDownloader.new
     VCR.insert_cassette('oddb2xml', :tag => :lppv)
@@ -374,6 +386,7 @@ end
 
 describe Oddb2xml::MigelDownloader do
   include ServerMockHelper
+  before(:all) do VCR.eject_cassette end
   before(:each) do
     @downloader = Oddb2xml::MigelDownloader.new
     VCR.insert_cassette('oddb2xml', :tag => :migel)
@@ -397,6 +410,7 @@ end
 
 describe Oddb2xml::ZurroseDownloader do
   include ServerMockHelper
+  before(:all) do VCR.eject_cassette end
   before(:each) do
     VCR.configure do |c|
       c.before_record(:zurrose) do |i|
@@ -429,6 +443,7 @@ end
 
 describe Oddb2xml::MedregbmDownloader do
   include ServerMockHelper
+  before(:all) do VCR.eject_cassette end
   before(:each) do
     VCR.configure do |c|
       c.before_record(:medreg) do |i|
@@ -464,6 +479,7 @@ describe Oddb2xml::MedregbmDownloader do
 
   context 'betrieb' do
     before(:each) do
+      VCR.eject_cassette
       VCR.insert_cassette('oddb2xml', :tag => :medreg)
       @downloader = Oddb2xml::MedregbmDownloader.new(:company)
     end
@@ -484,6 +500,7 @@ describe Oddb2xml::MedregbmDownloader do
 
   context 'person' do
     before(:each) do
+      VCR.eject_cassette
       VCR.insert_cassette('oddb2xml', :tag => :medreg)
       @downloader = Oddb2xml::MedregbmDownloader.new(:person)
     end
@@ -507,6 +524,7 @@ end
 
 describe Oddb2xml::SwissmedicInfoDownloader do
   include ServerMockHelper
+  before(:all) do VCR.eject_cassette end
   before(:each) do
     VCR.configure do |c|
       c.before_record(:swissmedicInfo) do |i|
@@ -533,6 +551,7 @@ describe Oddb2xml::SwissmedicInfoDownloader do
       end
     end
     end
+    VCR.eject_cassette
     VCR.insert_cassette('oddb2xml', :tag => :swissmedicInfo)
     common_before
     @downloader = Oddb2xml::SwissmedicInfoDownloader.new

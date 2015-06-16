@@ -31,15 +31,19 @@ end
 describe Oddb2xml::Cli do
   # Setting ShouldRun to false and changing one -> if true allows you
   # to run easily the failing test
+  before(:all) do  VCR.eject_cassette; VCR.insert_cassette('oddb2xml') end
+  after(:all) do   VCR.eject_cassette end
   include ServerMockHelper
   before(:each) do
-    @savedDir = Dir.pwd
+VCR.eject_cassette; VCR.insert_cassette('oddb2xml')
+@savedDir = Dir.pwd
     cleanup_directories_before_run
     Dir.chdir(Oddb2xml::WorkDir)
   end
   after(:each) do
     Dir.chdir(@savedDir) if @savedDir and File.directory?(@savedDir)
     cleanup_compressor
+    VCR.eject_cassette; 
   end
   context 'when -c tar.gz option is given' do
     let(:cli) do
@@ -47,7 +51,14 @@ describe Oddb2xml::Cli do
       options.parser.parse!('-c tar.gz'.split(' '))
       Oddb2xml::Cli.new(options.opts)
     end
-  if false
+    it 'should not create any xml file' do
+      cli.run
+#      buildr_capture(:stdout) { cli.run }.should match(/Pharma/)
+      Dir.glob(File.join(Oddb2xml::WorkDir, 'oddb_*.xml')).each do |file|
+        File.exists?(file).should be_false
+      end
+    end
+  if true
     it_behaves_like 'any interface for product'
     it 'should have compress option' do
       cli.should have_option(:compress_ext => 'tar.gz')
@@ -66,7 +77,7 @@ describe Oddb2xml::Cli do
       end
     end
   end
-  if false
+  if true
   context 'when -c zip option is given' do
     let(:cli) do
       options = Oddb2xml::Options.new
