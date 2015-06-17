@@ -30,20 +30,44 @@ module Oddb2xml
   WorkDir        = File.join(File.dirname(__FILE__), 'run')
   Downloads      = File.join(WorkDir, 'downloads')
   SpecCompressor = File.join(Oddb2xml::SpecData, 'compressor')
-  GTINS_DRUGS = [ '733905577161',
-                  '7680536620137',
-                  '7680620690084', # needed for extractor_spec.rb
-                  '7680555580054',
-                  '7680316950157',
-                  '5000223439507',
-                  '5000223074777',
+  GTINS_DRUGS = [ '733905577161', # 1-DAY ACUVUE Moist Tag -2.00dpt BC 8.5
                   '4042809018288',
                   '4042809018400',
                   '4042809018493',
+                  '5000223074777',
+                  '5000223439507',
                   '7611600441013',
                   '7611600441020',
                   '7611600441037',
+                  '7680161050583', # Hirudoid Creme 3 mg/g
+                  '7680172330414', # SELSUN
+                  '7680284860144',
+                  '7680316440115', # FERRO-GRADUMET Depottabl 30 Stk
+                  '7680316950157', # SOFRADEX Gtt Auric 8 ml
+                  '7680324750190', # LANSOYL Gel
+                  '7680353660163',
+                  '7680403330459',
+                  '7680536620137', # 3TC Filmtabl 150 mg
+                  '7680555580054', # ZYVOXID
+                  '7680620690084', # LEVETIRACETAM DESITIN Mini Filmtab 250 mg needed for extractor_spec.rb
                   ]
+    FERRO_GRADUMET_GTIN           = '7680316440115'
+    FIRST_DAY_ACUVUE_GTIN         = '733905577161'
+    HIRUDOID_GTIN                 = '7680161050583'
+    LANSOL_GTIN                   = '7680324750190'
+    LANSOL_PRICE_RESELLER_PUB     = 18.95
+    LANSOL_PRICE_ZURROSE          = 10.54
+    LANSOL_PRICE_ZURROSEPUB       = 16.25
+    LEVETIRACETAM_GTIN            = '7680620690084'
+    LEVETIRACETAM_PRICE_PPUB      = 27.8
+    LEVETIRACETAM_PRICE_ZURROSE   = 13.49
+    LEVETIRACETAM_PRICE_RESELLER_PUB = 24.3
+    SOFRADEX_GTIN                 = '7680316950157'
+    SOFRADEX_PRICE_RESELLER_PUB   = 12.9
+    SOFRADEX_PRICE_ZURROSE        = 7.18
+    SOFRADEX_PRICE_ZURROSEPUB     = 15.45
+    THREE_TC_GTIN                 = '7680536620137'
+    ZYVOXID_GTIN                  = '7680555580054'
 
   GTINS_MEDREG = [
     7601001380028, # Glarus
@@ -67,9 +91,9 @@ VCR.configure do |config|
   config.default_cassette_options = { :record => ARGV.join(' ').index('downloader_spec') ? :new_episodes : :once ,
                                       :preserve_exact_body_bytes => true,
                                       :allow_playback_repeats => true,
-                                      # :match_requests_on => [:uri, :method, :body, :headers]
+                                      :serialize_with => :syck,
+                                      :decode_compressed_response => true,
                                     }
-  pp  config.default_cassette_options
   config.before_http_request(:real?) do |request|
     $stderr.puts("before real request: #{request.method} #{request.uri}")
     $stderr.flush

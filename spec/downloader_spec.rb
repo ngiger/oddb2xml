@@ -180,6 +180,11 @@ describe Oddb2xml::EphaDownloader do
       c.before_record(:epha) do |i|
         if /epha/.match(i.request.uri)
           puts "#{Time.now}: #{__LINE__}: #{__LINE__}: URI was #{i.request.uri}"
+          lines = i.response.body.split("\n")
+          to_add = lines[0..5]
+          iksnrs = []; Oddb2xml::GTINS_DRUGS.each{ |x| iksnrs << x[4..9] }
+          iksnrs.each{ |iksnr| to_add << lines.find{ |x| x.index(','+iksnr.to_s+',') } }
+          i.response.body = to_add.compact.join("\n")
           i.response.body = i.response.body.split("\n")[0..5].join("\n")
           i.response.headers['Content-Length'] = i.response.body.size
         end
@@ -416,7 +421,10 @@ describe Oddb2xml::ZurroseDownloader do
       c.before_record(:zurrose) do |i|
         if /zurrose/i.match(i.request.uri)
           puts "#{Time.now}: #{__LINE__}: #{__LINE__}: URI was #{i.request.uri}"
-          i.response.body = i.response.body.split("\n")[0..5].join("\n")
+          lines = i.response.body.clone.split("\n")
+          to_add = lines[0..5]
+          Oddb2xml::GTINS_DRUGS.each{ |ean| to_add << lines.find{ |x| x.index(ean.to_s) } }
+          i.response.body = to_add.compact.join("\n")
           i.response.headers['Content-Length'] = i.response.body.size
         end
       end

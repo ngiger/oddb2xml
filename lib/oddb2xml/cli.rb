@@ -262,8 +262,8 @@ module Oddb2xml
           Oddb2xml.log("zurrose xml #{xml.size} bytes")
           @mutex.synchronize do
             hsh = ZurroseExtractor.new(xml, @options[:extended]).to_hash
+            Oddb2xml.log("zurrose added #{hsh.size} items from xml with #{xml.size} bytes")
             @infos_zur_rose = hsh
-            Oddb2xml.log("zurrose added #{@infos_zur_rose.size} items from xml with #{xml.size} bytes")
           end
         end
       when :index
