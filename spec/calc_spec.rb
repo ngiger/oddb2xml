@@ -301,10 +301,6 @@ if RunAllTests
       src = File.expand_path(File.join(File.dirname(__FILE__), 'data', 'swissmedic_package-galenic.xlsx'))
       dest =  File.join(Oddb2xml::WorkDir, 'swissmedic_package.xlsx')
       FileUtils.makedirs(Oddb2xml::WorkDir)
-      FileUtils.cp(src, dest, { :verbose => true, :preserve => true})
-      FileUtils.cp(File.expand_path(File.join(File.dirname(__FILE__), 'data', 'XMLPublications.zip')),
-                  File.join(Oddb2xml::WorkDir, 'downloads'),
-                  { :verbose => true, :preserve => true})
       cli.run
       expected = [
         'oddb_calc.xml',
@@ -345,9 +341,10 @@ if RunAllTests
           result.should eq value.to_s
       }
       matri_name = 'Matricariae Extractum Isopropanolicum Liquidum'
-      XPath.match( doc, "//ARTICLE[GTIN='7680545250363']/COMPOSITIONS/COMPOSITION/SUBSTANCES/SUBSTANCE/SUBSTANCE_NAME").
-        find{|x| x.text.eql?("Alprostadilum")}.text.should eq 'Alprostadilum'
-#      XPath.match( doc, "//ARTICLE[GTIN='7680458820202']/NAME").last.text.should eq 'Magnesiumchlorid 0,5 molar B. Braun'
+      XPath.match( doc, "//ARTICLE[GTIN='7680002770014']/NAME").first.text.should eq "Coeur-Vaisseaux Sérocytol, suppositoire"
+      XPath.match( doc, "//ARTICLE[GTIN='7680545250363']").first.should eq nil
+#      XPath.match( doc, "//ARTICLE[GTIN='7680545250363']/COMPOSITIONS/COMPOSITION/SUBSTANCES/SUBSTANCE/SUBSTANCE_NAME")
+#        find{|x| x.text.eql?("Alprostadilum")}.text.should eq 'Alprostadilum'
       XPath.match( doc, "//ARTICLE[GTIN='7680458820202']/NAME").last.text.should eq 'Magnesiumchlorid 0,5 molar B. Braun, Zusatzampulle für Infusionslösungen'
       XPath.match( doc, "//ARTICLE[GTIN='7680458820202']/GALENIC_FORM").last.text.should match /Ampulle/i
       XPath.match( doc, "//ARTICLE[GTIN='7680555940018']/COMPOSITIONS/COMPOSITION/LABEL").first.text.should eq 'I'
@@ -358,7 +355,6 @@ if RunAllTests
 
       XPath.match( doc, "//ARTICLE[GTIN='7680434541015']/COMPOSITIONS/COMPOSITION/SUBSTANCES/SUBSTANCE/SUBSTANCE_NAME").
         find{|x| x.text.eql?(matri_name)}.text.should eq matri_name
-#      XPath.match( doc, "//ARTICLE[GTIN='7680434541015']/NAME").last.text.should eq 'Kamillin Medipharm'
       XPath.match( doc, "//ARTICLE[GTIN='7680434541015']/NAME").last.text.should eq 'Kamillin Medipharm, Bad'
       XPath.match( doc, "//ARTICLE[GTIN='7680434541015']/GALENIC_FORM").last.text.should eq 'Bad'
       XPath.match( doc, "//ARTICLE[GTIN='7680434541015']/COMPOSITIONS/COMPOSITION/SUBSTANCES/SUBSTANCE/QTY").first.text.should eq '98.9'
@@ -372,7 +368,6 @@ if RunAllTests
 
       XPath.match( doc, "//ARTICLE[GTIN='7680446250592']/COMPOSITIONS/COMPOSITION/SUBSTANCES/SUBSTANCE/SALTS/SALT/SUBSTANCE_NAME").first.text.should eq 'Ceftriaxonum Natricum'
 
-#      XPath.match( doc, "//ARTICLE[GTIN='7680611860045']/NAME").first.text.should eq 'Nutriflex Omega special'
       XPath.match( doc, "//ARTICLE[GTIN='7680611860045']/NAME").first.text.should eq 'Nutriflex Omega special, Infusionsemulsion 2500 ml'
       XPath.match( doc, "//ARTICLE[GTIN='7680611860045']/GALENIC_FORM").first.text.should eq 'Infusionsemulsion'
       XPath.match( doc, "//ARTICLE[GTIN='7680611860045']/SELLING_UNITS").first.text.should eq '5'

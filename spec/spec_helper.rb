@@ -30,6 +30,19 @@ module Oddb2xml
   WorkDir        = File.join(File.dirname(__FILE__), 'run')
   Downloads      = File.join(WorkDir, 'downloads')
   SpecCompressor = File.join(Oddb2xml::SpecData, 'compressor')
+  GTINS_CALC = [
+                  '7680458820202', # for calc_spec.rb
+                  '7680555940018', # for calc_spec.rb
+                  '7680434541015', # for calc_spec.rb
+                  '7680300150105', # for calc_spec.rb
+                  '7680446250592', # for calc_spec.rb
+                  '7680611860045', # for calc_spec.rb
+                  '7680165980114', # for calc_spec.rb
+                  '7680589430011', # for calc_spec.rb
+                  '7680556740075', # for calc_spec.rb
+                  '7680540151009', # for calc_spec.rb
+                  '7680560890018', # for calc_spec.rb
+    ]
   GTINS_DRUGS = [ '733905577161', # 1-DAY ACUVUE Moist Tag -2.00dpt BC 8.5
                   '4042809018288',
                   '4042809018400',
@@ -50,7 +63,7 @@ module Oddb2xml
                   '7680536620137', # 3TC Filmtabl 150 mg
                   '7680555580054', # ZYVOXID
                   '7680620690084', # LEVETIRACETAM DESITIN Mini Filmtab 250 mg needed for extractor_spec.rb
-                  ]
+                  ] + GTINS_CALC
     FERRO_GRADUMET_GTIN           = '7680316440115'
     FIRST_DAY_ACUVUE_GTIN         = '733905577161'
     HIRUDOID_GTIN                 = '7680161050583'
