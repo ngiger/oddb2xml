@@ -9,7 +9,7 @@ include Oddb2xml
 
 describe Oddb2xml::Calc do
   RunAllTests = true
-  before(:all) do  VCR.insert_cassette('oddb2xml') end
+  before(:all) do  VCR.eject_cassette; VCR.insert_cassette('oddb2xml') end
   after(:all) do   VCR.eject_cassette end
 
   after(:each) do

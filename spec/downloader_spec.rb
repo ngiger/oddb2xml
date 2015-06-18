@@ -67,7 +67,6 @@ describe Oddb2xml::SwissmedicDownloader do
       c.before_record(:swissmedic) do |i|
         if i.response.headers['Content-Disposition'] and /www.swissmedic.ch/.match(i.request.uri)
           puts "#{Time.now}: URI was #{i.request.uri}"
-          pp i.response.headers
           m = /filename=.([^\d]+)/.match(i.response.headers['Content-Disposition'][0])
           puts "#{Time.now}: SwissmedicDownloader #{m[1]} (#{i.response.body.size} bytes)."
           # binding.pry
@@ -170,7 +169,6 @@ describe Oddb2xml::SwissmedicDownloader do
     end
   end
 end
-if true
 
 describe Oddb2xml::EphaDownloader do
   include ServerMockHelper
@@ -179,7 +177,7 @@ describe Oddb2xml::EphaDownloader do
     VCR.configure do |c|
       c.before_record(:epha) do |i|
         if /epha/.match(i.request.uri)
-          puts "#{Time.now}: #{__LINE__}: #{__LINE__}: URI was #{i.request.uri}"
+          puts "#{Time.now}: #{__LINE__}: URI was #{i.request.uri}"
           lines = i.response.body.split("\n")
           to_add = lines[0..5]
           iksnrs = []; Oddb2xml::GTINS_DRUGS.each{ |x| iksnrs << x[4..9] }
@@ -420,7 +418,7 @@ describe Oddb2xml::ZurroseDownloader do
     VCR.configure do |c|
       c.before_record(:zurrose) do |i|
         if /zurrose/i.match(i.request.uri)
-          puts "#{Time.now}: #{__LINE__}: #{__LINE__}: URI was #{i.request.uri}"
+          puts "#{Time.now}: #{__LINE__}: URI was #{i.request.uri}"
           lines = i.response.body.clone.split("\n")
           to_add = lines[0..5]
           Oddb2xml::GTINS_DRUGS.each{ |ean| to_add << lines.find{ |x| x.index(ean.to_s) } }
@@ -456,7 +454,7 @@ describe Oddb2xml::MedregbmDownloader do
     VCR.configure do |c|
       c.before_record(:medreg) do |i|
         if /medregbm.admin.ch/i.match(i.request.uri)
-          puts "#{Time.now}: #{__LINE__}: #{__LINE__}: URI was #{i.request.uri} containing #{i.response.body.size} bytes"
+          puts "#{Time.now}: #{__LINE__}: URI was #{i.request.uri} containing #{i.response.body.size} bytes"
           medreg_dir = File.join(Oddb2xml::WorkDir, 'medreg')
           FileUtils.makedirs(medreg_dir)
           xlsx_name = File.join(medreg_dir, /ListBetrieb/.match(i.request.uri) ? 'Betriebe.xlsx' : 'Personen.xlsx')
@@ -582,5 +580,4 @@ describe Oddb2xml::SwissmedicInfoDownloader do
       File.exist?('swissmedic_info.zip').should eq(false)
     end
   end
-end
 end

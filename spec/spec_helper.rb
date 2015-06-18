@@ -104,7 +104,7 @@ VCR.configure do |config|
   config.default_cassette_options = { :record => ARGV.join(' ').index('downloader_spec') ? :new_episodes : :once ,
                                       :preserve_exact_body_bytes => true,
                                       :allow_playback_repeats => true,
-                                      :serialize_with => :syck,
+                                      :serialize_with => :json,
                                       :decode_compressed_response => true,
                                     }
   config.before_http_request(:real?) do |request|
