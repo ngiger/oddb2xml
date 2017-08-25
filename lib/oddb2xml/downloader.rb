@@ -237,7 +237,7 @@ module Oddb2xml
         :log_level       => :info,
         :log             => false, # $stdout
         :raise_errors    => true,
-        :ssl_version     => :SSLv3,
+        :ssl_version     => :SSLv2,
         :wsdl            => @url
       }
       @client = Savon::Client.new(config)
