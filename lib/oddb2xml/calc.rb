@@ -95,8 +95,14 @@ module Oddb2xml
     UNKNOWN_GALENIC_FORM = 140
     UNKNOWN_GALENIC_GROUP = 1
     DATA_DIR = File.expand_path(File.join(File.dirname(__FILE__), "..", "..", "data"))
-    @@galenic_groups = YAML.load_file(File.join(DATA_DIR, "gal_groups.yaml"),  permitted_classes: [ Oddb2xml::GalenicForm, Oddb2xml::GalenicGroup, Symbol])
-    @@galenic_forms = YAML.load_file(File.join(DATA_DIR, "gal_forms.yaml"),  permitted_classes: [ Oddb2xml::GalenicForm, Oddb2xml::GalenicGroup, Symbol])
+    if Gem::Version.new(Psych::VERSION) >= Gem::Version.new('4.0.0')
+      @@galenic_groups = YAML.load_file(File.join(DATA_DIR, "gal_groups.yaml"),  permitted_classes: [ Oddb2xml::GalenicForm, Oddb2xml::GalenicGroup, Symbol])
+      @@galenic_forms = YAML.load_file(File.join(DATA_DIR, "gal_forms.yaml"),  permitted_classes: [ Oddb2xml::GalenicForm, Oddb2xml::GalenicGroup, Symbol])
+    else
+      @@galenic_groups = YAML.load_file(File.join(DATA_DIR, "gal_groups.yaml"))
+      @@galenic_forms = YAML.load_file(File.join(DATA_DIR, "gal_forms.yaml"))
+    end
+
     @@new_galenic_forms = []
     @@names_without_galenic_forms = []
     @@rules_counter = {}

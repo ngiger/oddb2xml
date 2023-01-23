@@ -405,15 +405,14 @@
     version = "1.4.0";
   };
   psych = {
-    dependencies = ["stringio"];
     groups = ["development"];
     platforms = [];
     source = {
       remotes = ["https://rubygems.org"];
-      sha256 = "0xmq609h7j0xjr7jwayg8kmvcpp347cp0wnyq7jgpn58vk1ja17p";
+      sha256 = "186i2hc6sfvg4skhqf82kxaf4mb60g65fsif8w8vg1hc9mbyiaph";
       type = "gem";
     };
-    version = "4.0.6";
+    version = "3.3.4";
   };
   public_suffix = {
     groups = ["default" "development"];
@@ -696,16 +695,6 @@
       type = "gem";
     };
     version = "1.0.1";
-  };
-  stringio = {
-    groups = ["default" "development"];
-    platforms = [];
-    source = {
-      remotes = ["https://rubygems.org"];
-      sha256 = "0sxzqx4nggwm6lgkn7nni3qsxbwl9cl8j2wznk8x3aaqnaabav6w";
-      type = "gem";
-    };
-    version = "3.0.4";
   };
   timecop = {
     groups = ["development"];

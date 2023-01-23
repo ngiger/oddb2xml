@@ -9,7 +9,6 @@ name: Ruby
 
 on:
   push:
-    branches: [ master ]
   pull_request:
     branches: [ master ]
 
@@ -22,18 +21,13 @@ jobs:
       fail-fast: false
       matrix:
         os: [ ubuntu]
-        ruby: [2.6, 2.7, "3.0", 3.1, 3.2]
+        ruby: ["3.0", 3.1, 3.2]
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
+    # https://github.com/marketplace/actions/setup-ruby-jruby-and-truffleruby
     - uses: ruby/setup-ruby@v1
       with:
         ruby-version: ${{ matrix.ruby }}
-        bundler-cache: true
-
-    - name: Install dependencies
-      run: |
-        bundle config set path .bundle/gems --local
-        bundle config set without debugger  --local
-        bundle install
+        bundler-cache: true # runs 'bundle install' and caches installed gems automatical
     - name: Test with RSpec
       run: bundle exec rspec

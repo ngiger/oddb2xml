@@ -13,40 +13,28 @@
         pkgs = nixpkgs.legacyPackages.${system};
         rubyVersion = nixpkgs.lib.strings.removePrefix "ruby-"
           (nixpkgs.lib.fileContents ./.ruby-version);
-        ruby = nixpkgs-ruby.packages.${system}."ruby-${rubyVersion}";       
 
-        gems = pkgs.bundlerEnv {
-          name = "gemset";
-          inherit ruby;
-          gemfile = ./Gemfile;
-          lockfile = ./Gemfile.lock;
-          gemset = ./gemset.nix;
-          groups = [ "default" "production" "development" "test" ];
-        };
       in
       {
         devShells = with pkgs; {
           default = mkShell {
             motd = "Ruby version is2 ${rubyVersion}";
             buildInputs = [
-              # gemsls -l
-              ruby
+              nixpkgs-ruby.packages.${system}."ruby-${rubyVersion}"
               bundix
             ];
           };
           ruby_3_1 = mkShell {
-            motd = "Ruby version isg 3.1";
+            motd = "Ruby version is 3.1.2";
             buildInputs = [
-              # gems
-              ruby_3_1
+              nixpkgs-ruby.packages.${system}."ruby-3.1.2"
               bundix
             ];
           };
-          ruby_2_7 = mkShell {
-            motd = "Ruby version isc 2.7";
+          ruby_3_0 = mkShell {
+            motd = "Ruby version is 3.0.4";
             buildInputs = [
-              # gems
-              ruby_2_7
+              nixpkgs-ruby.packages.${system}."ruby-3.0.4"
               bundix
             ];
           };
