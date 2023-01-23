@@ -4,9 +4,10 @@
     nixpkgs-ruby.url = "github:bobvanderlinden/nixpkgs-ruby";
     nixpkgs-ruby.inputs.nixpkgs.follows = "nixpkgs";
     flake-utils.url = "github:numtide/flake-utils";
+    devenv.url = "github:cachix/devenv";    
   };
 
-  outputs = { self, nixpkgs, nixpkgs-ruby, flake-utils }:
+  outputs = { self, nixpkgs, nixpkgs-ruby, flake-utils, devenv }:
     flake-utils.lib.eachDefaultSystem (system:
       let
         pkgs = nixpkgs.legacyPackages.${system};
@@ -24,13 +25,31 @@
         };
       in
       {
-        devShell = with pkgs;
-          mkShell {
+        devShells = with pkgs; {
+          default = mkShell {
+            motd = "Ruby version is2 ${rubyVersion}";
             buildInputs = [
-              gems
+              # gemsls -l
               ruby
               bundix
             ];
           };
+          ruby_3_1 = mkShell {
+            motd = "Ruby version isg 3.1";
+            buildInputs = [
+              # gems
+              ruby_3_1
+              bundix
+            ];
+          };
+          ruby_2_7 = mkShell {
+            motd = "Ruby version isc 2.7";
+            buildInputs = [
+              # gems
+              ruby_2_7
+              bundix
+            ];
+          };
+        };
       });
 }
