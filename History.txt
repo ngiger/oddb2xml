@@ -1,4 +1,6 @@
 === 2.7.10 / 2.10.23  -- not yet released
+* Fix spec tests for ruby 3.2
+* Removed ruby 2.6 from supported versions
 * Remove unused italian translation. Elexis never adopted it.
 
 === 2.7.9 / 19.09.22

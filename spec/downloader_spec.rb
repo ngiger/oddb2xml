@@ -5,7 +5,7 @@ VCR.eject_cassette # we use insert/eject around each example
 
 # not used but, as I still don't know how to generate
 def filter_aips_xml(filename = "AipsDownload_ng.xml", ids_to_keep = [55558, 61848])
-  puts "File #{filename} exists? #{File.exist?(filename)}"
+  puts "File #{filename} exist? #{File.exist?(filename)}"
   if $VERBOSE
     puts %(<?xml version="1.0" encoding="utf-8"?>
 <medicalInformations>
@@ -75,7 +75,7 @@ def common_after
   Dir.chdir(@saved_dir) if @saved_dir && File.directory?(@saved_dir)
   VCR.eject_cassette
   vcr_file = File.expand_path(File.join(Oddb2xml::SpecData, "..", "fixtures", "vcr_cassettes", "oddb2xml.json"))
-  puts "Pretty-printing #{vcr_file} exists? #{File.exist?(vcr_file)}" if $VERBOSE
+  puts "Pretty-printing #{vcr_file} exist? #{File.exist?(vcr_file)}" if $VERBOSE
   vcr_file_new = vcr_file.sub(".json", ".new")
   cmd = "cat #{vcr_file} | python -mjson.tool > #{vcr_file_new}"
   system(cmd)
@@ -102,7 +102,7 @@ def unzip_files(zipfile_name, directory = Dir.pwd)
     # Handle entries one by one
     zip_file.each do |entry|
       # Extract to file/directory/symlink
-      puts "downloader_spec.rb: Extracting #{entry.name} exists? #{File.exist?(entry.name)} into #{directory}"
+      puts "downloader_spec.rb: Extracting #{entry.name} exist? #{File.exist?(entry.name)} into #{directory}"
       FileUtils.rm_f(entry.name, verbose: true) if File.exist?(entry.name)
       entry.extract(entry.name)
     end

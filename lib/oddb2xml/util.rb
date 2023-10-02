@@ -107,7 +107,7 @@ module Oddb2xml
     src = "#{WORK_DIR}/#{File.basename(file)}"
     dest = "#{DOWNLOADS}/#{File.basename(file)}"
     FileUtils.makedirs(DOWNLOADS)
-    # return unless File.exists?(file)
+    # return unless File.exist?(file)
     return unless file && File.exist?(file)
     return if File.expand_path(file).eql?(dest)
     FileUtils.cp(src, dest, verbose: false)
