@@ -11,8 +11,8 @@ describe Oddb2xml::Builder do
     expect(@inhalt).not_to be nil
     unless @inhalt.index(expected_value)
       puts expected_value
-      # binding.pry # TODO: Must not be active in production!!
     end
+    # binding.irb unless @inhalt.index(expected_value)
     expect(@inhalt.index(expected_value)).not_to be nil
   end
 
@@ -67,7 +67,6 @@ describe Oddb2xml::Builder do
             <SALECD>A</SALECD>
             <DSCR>3M MEDIPORE+PAD Absorbtionsverb 10x15cm 8 x 25 Stk</DSCR>
             <DSCRF>3M MEDIPORE+PAD compr absorb 10x15cm 8 x 25 pce</DSCRF>
-            <DSCRI>3M MEDIPORE+PAD Absorbtionsverb 10x15cm 8 x 25 Stk</DSCRI>
             <COMP>
                 <GLN>7610182000007</GLN>
             </COMP>
@@ -75,7 +74,7 @@ describe Oddb2xml::Builder do
       expect(@inhalt.index(expected)).not_to be nil
     end
 
-    it "should have a DSCRF and ATC for product PRIORIX TETRA" do
+    it "should have a ATC for product PRIORIX TETRA" do
       expected = %(<PRODUCT>
             <PRODNO>5815801</PRODNO>
             <SALECD>A</SALECD>
@@ -201,7 +200,6 @@ describe Oddb2xml::Builder do
             <SALECD>A</SALECD>
             <DSCR>Dibase 10'000 Tropfen 10000 IE/ml Fl 10 ml</DSCR>
             <DSCRF>Dibase 10'000 gouttes 10000 UI/ml fl 10 ml</DSCRF>
-            <DSCRI>Dibase 10'000 gouttes 10000 UI/ml fl 10 ml</DSCRI>
             <COMP>
                 <NAME>Gebro Pharma AG</NAME>
                 <GLN>7612053000000</GLN>
@@ -210,6 +208,7 @@ describe Oddb2xml::Builder do
             <PPUB>9.25</PPUB>
             <PKG_SIZE>1</PKG_SIZE>
             <MEASURE>Flasche(n)</MEASURE>
+            <MEASUREF>Flasche(n)</MEASUREF>
             <DOSAGE_FORM>orale Tropflösung</DOSAGE_FORM>
             <SL_ENTRY>true</SL_ENTRY>
             <IKSCAT>D</IKSCAT>
@@ -233,7 +232,6 @@ describe Oddb2xml::Builder do
             <SALECD>A</SALECD>
             <DSCR>Carbaderm Creme Tb 300 ml</DSCR>
             <DSCRF>Carbaderm crème tb 300 ml</DSCRF>
-            <DSCRI>Carbaderm crème tb 300 ml</DSCRI>
             <PEXF>14.61</PEXF>
             <PPUB>26.95</PPUB>
             <SL_ENTRY>true</SL_ENTRY>
@@ -246,7 +244,7 @@ describe Oddb2xml::Builder do
             <PHAR>0055805</PHAR>
             <SALECD>A</SALECD>
             <DSCR>TENSOPLAST Kompressionsbinde 5cmx4.5m</DSCR>
-            <DSCRF/>
+            <DSCRF>--missing--</DSCRF>
             <PEXF>0.00</PEXF>
             <PPUB>22.95</PPUB>
         </ITEM>),
@@ -255,7 +253,6 @@ describe Oddb2xml::Builder do
             <SALECD>A</SALECD>
             <DSCR>LANSOYL Gel 225 g</DSCR>
             <DSCRF>LANSOYL gel 225 g</DSCRF>
-            <DSCRI>LANSOYL Gel 225 g</DSCRI>
             <COMP>
                 <NAME>Actipharm SA</NAME>
                 <GLN>7601001002012</GLN>
@@ -264,6 +261,7 @@ describe Oddb2xml::Builder do
             <PPUB>16.25</PPUB>
             <PKG_SIZE>225</PKG_SIZE>
             <MEASURE>g</MEASURE>
+            <MEASUREF>g</MEASUREF>
             <DOSAGE_FORM>Gelée</DOSAGE_FORM>
             <IKSCAT>D</IKSCAT>
             <LPPV>true</LPPV>
@@ -275,7 +273,6 @@ describe Oddb2xml::Builder do
             <SALECD>A</SALECD>
             <DSCR>3TC Filmtabl 150 mg 60 Stk</DSCR>
             <DSCRF>3TC cpr pell 150 mg 60 pce</DSCRF>
-            <DSCRI>3TC cpr pell 150 mg 60 pce</DSCRI>
             <COMP>
                 <NAME>ViiV Healthcare GmbH</NAME>
                 <GLN>7601001392175</GLN>
@@ -284,6 +281,7 @@ describe Oddb2xml::Builder do
             <PPUB>205.3</PPUB>
             <PKG_SIZE>60</PKG_SIZE>
             <MEASURE>Tablette(n)</MEASURE>
+            <MEASUREF>Tablette(n)</MEASUREF>
             <DOSAGE_FORM>Filmtabletten</DOSAGE_FORM>
             <DOSAGE_FORMF>Comprimés filmés</DOSAGE_FORMF>
             <SL_ENTRY>true</SL_ENTRY>
@@ -298,7 +296,6 @@ describe Oddb2xml::Builder do
             <SALECD>A</SALECD>
             <DSCR>Hirudoid Creme 3 mg/g 40 g</DSCR>
             <DSCRF>Hirudoid crème 3 mg/g 40 g</DSCRF>
-            <DSCRI>Hirudoid crema 3 mg/g 40 g</DSCRI>
             <COMP>
                 <NAME>Medinova AG</NAME>
                 <GLN>7601001002258</GLN>
@@ -307,6 +304,7 @@ describe Oddb2xml::Builder do
             <PPUB>8.8</PPUB>
             <PKG_SIZE>40</PKG_SIZE>
             <MEASURE>g</MEASURE>
+            <MEASUREF>g</MEASUREF>
             <DOSAGE_FORM>Creme</DOSAGE_FORM>
             <SL_ENTRY>true</SL_ENTRY>
             <IKSCAT>D</IKSCAT>
@@ -319,7 +317,6 @@ describe Oddb2xml::Builder do
             <SALECD>A</SALECD>
             <DSCR>Hirudoid Creme 3 mg/g 100 g</DSCR>
             <DSCRF>Hirudoid crème 3 mg/g 100 g</DSCRF>
-            <DSCRI>Hirudoid crema 3 mg/g 100 g</DSCRI>
             <COMP>
                 <NAME>Medinova AG</NAME>
                 <GLN>7601001002258</GLN>
@@ -335,7 +332,6 @@ describe Oddb2xml::Builder do
             <SALECD>A</SALECD>
             <DSCR>ANCOPIR Inj Lös 5 Amp 2 ml</DSCR>
             <DSCRF>Ancopir, sol inj</DSCRF>
-            <DSCRI>Ancopir, sol inj</DSCRI>
             <COMP>
                 <NAME>Dr. Grossmann AG, Pharmaca</NAME>
                 <GLN/>
@@ -344,6 +340,7 @@ describe Oddb2xml::Builder do
             <PPUB>8.55</PPUB>
             <PKG_SIZE>5</PKG_SIZE>
             <MEASURE>Ampulle(n)</MEASURE>
+            <MEASUREF>Ampulle(n)</MEASUREF>
             <DOSAGE_FORM>Injektionslösung</DOSAGE_FORM>
             <DOSAGE_FORMF>Solution injectable</DOSAGE_FORMF>
             <SL_ENTRY>true</SL_ENTRY>
@@ -356,7 +353,6 @@ describe Oddb2xml::Builder do
             <SALECD>A</SALECD>
             <DSCR>FERRO-GRADUMET Depottabl 30 Stk</DSCR>
             <DSCRF>FERRO-GRADUMET cpr dépôt 30 pce</DSCRF>
-            <DSCRI>FERRO-GRADUMET Depottabl 30 Stk</DSCRI>
             <COMP>
                 <NAME>Farmaceutica Teofarma Suisse SA</NAME>
                 <GLN>7601001374539</GLN>
@@ -365,6 +361,7 @@ describe Oddb2xml::Builder do
             <PPUB>13.80</PPUB>
             <PKG_SIZE>30</PKG_SIZE>
             <MEASURE>Tablette(n)</MEASURE>
+            <MEASUREF>Tablette(n)</MEASUREF>
             <DOSAGE_FORM>Tupfer</DOSAGE_FORM>
             <DOSAGE_FORMF>Compresse</DOSAGE_FORMF>
             <IKSCAT>C</IKSCAT>
@@ -375,7 +372,6 @@ describe Oddb2xml::Builder do
             <SALECD>A</SALECD>
             <DSCR>3TC Filmtabl 150 mg</DSCR>
             <DSCRF>3TC cpr pell 150 mg</DSCRF>
-            <DSCRI>3TC cpr pell 150 mg</DSCRI>
             <ATC>J05AF05</ATC>
             <SUBSTANCE>Lamivudinum</SUBSTANCE>
         </PRODUCT>),
@@ -384,13 +380,13 @@ describe Oddb2xml::Builder do
             <SALECD>A</SALECD>
             <DSCR>SEROCYTOL Herz-Gefässe Supp 3 Stk</DSCR>
             <DSCRF>SEROCYTOL Coeur-Vaisseaux supp 3 pce</DSCRF>
-            <DSCRI>SEROCYTOL Herz-Gefässe Supp 3 Stk</DSCRI>
             <COMP>
                 <NAME>Serolab SA (succursale de Remaufens)</NAME>
                 <GLN>7640128710004</GLN>
             </COMP>
             <PKG_SIZE>3</PKG_SIZE>
             <MEASURE>Suppositorien</MEASURE>
+            <MEASUREF>Suppositorien</MEASUREF>
             <DOSAGE_FORM>suppositoire</DOSAGE_FORM>
             <IKSCAT>B</IKSCAT>
             <PRODNO>0027701</PRODNO>
@@ -400,7 +396,6 @@ describe Oddb2xml::Builder do
             <SALECD>A</SALECD>
             <DSCR>Humalog Inj Lös Durchstf 10 ml</DSCR>
             <DSCRF>Humalog sol inj flac 10 ml</DSCRF>
-            <DSCRI>Humalog sol iniez fiala 10 ml</DSCRI>
             <COMP>
                 <NAME>Eli Lilly (Suisse) SA</NAME>
                 <GLN>7601001261853</GLN>
@@ -409,6 +404,7 @@ describe Oddb2xml::Builder do
             <PPUB>51.3</PPUB>
             <PKG_SIZE>1</PKG_SIZE>
             <MEASURE>Flasche(n)</MEASURE>
+            <MEASUREF>Flasche(n)</MEASUREF>
             <DOSAGE_FORM>Injektionslösung</DOSAGE_FORM>
             <DOSAGE_FORMF>Solution injectable</DOSAGE_FORMF>
             <SL_ENTRY>true</SL_ENTRY>
@@ -422,7 +418,6 @@ describe Oddb2xml::Builder do
             <SALECD>I</SALECD>
             <DSCR>SEROCYTOL Kolon Supp 3 Stk</DSCR>
             <DSCRF>SEROCYTOL Côlon supp 3 pce</DSCRF>
-            <DSCRI>SEROCYTOL Kolon Supp 3 Stk</DSCRI>
             <COMP>
                 <GLN>7640128710004</GLN>
             </COMP>
@@ -434,7 +429,6 @@ describe Oddb2xml::Builder do
             <SALECD>A</SALECD>
             <DSCR>Varilrix Trockensub c solv</DSCR>
             <DSCRF>Varilrix subst sèche c solv</DSCRF>
-            <DSCRI>Varilrix sost secca c solv</DSCRI>
             <ATC>J07BK01</ATC>
             <LIMNAMEBAG>0808</LIMNAMEBAG>
             <SUBSTANCE>Vaccinum virus varicellae vivus attenuat. (Stamm OKA)</SUBSTANCE>
@@ -444,7 +438,6 @@ describe Oddb2xml::Builder do
             <SALECD>A</SALECD>
             <DSCR>Varilrix Trockensub c solv Fertspr 0.500 ml</DSCR>
             <DSCRF>Varilrix subst sèche c solv ser prê 0.500 ml</DSCRF>
-            <DSCRI>Varilrix sost secca c solv sir preriempita 0.500 ml</DSCRI>
             <COMP>
                 <NAME>GlaxoSmithKline AG</NAME>
                 <GLN>7601001000674</GLN>
@@ -468,7 +461,7 @@ describe Oddb2xml::Builder do
             <PHAR>2069639</PHAR>
             <SALECD>A</SALECD>
             <DSCR>EINF ARZNEI Ceres Urtinktur spez 20ml</DSCR>
-            <DSCRF/>
+            <DSCRF>--missing--</DSCRF>
             <PEXF>23.44</PEXF>
             <PPUB>31.30</PPUB>
             <!--Chapter70 hack 2500000588532 EINF ARZNEI Ceres Urtinktur spez 20ml-->

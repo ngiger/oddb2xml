@@ -536,8 +536,6 @@ module Oddb2xml
             name = refdata && refdata[:desc_de] ? refdata[:desc_de] : obj[:sequence_name]
           elsif lang == :fr
             name = refdata && refdata[:desc_fr] ? refdata[:desc_fr] : obj[:sequence_name]
-          elsif lang == :it
-            name =  refdata[:desc_it] if refdata && refdata[:desc_it]
           else
             return false
           end
@@ -570,7 +568,7 @@ module Oddb2xml
               xml.GTIN ean
               xml.PRODNO obj[:prodno] if obj[:prodno]
               xml.DSCRD check_name(obj, :de)
-              xml.DSCRF check_name(obj, :fr) if check_name(obj, :fr)
+              xml.DSCRF check_name(obj, :fr)
               xml.ATC obj[:atc_code] unless obj[:atc_code].empty?
               xml.IT obj[:ith_swissmedic] if obj[:ith_swissmedic]
               xml.CPT
@@ -1521,14 +1519,8 @@ module Oddb2xml
                   name_fr ||= (obj[:name_fr] + ", " + obj[:desc_fr]).strip if obj[:name_fr]
                   # ZuRorse has only german names
                   name_fr ||= (item[:name_fr] + ", " + item[:desc_fr]) if item
+                  name_fr ||= name
                   xml.DSCRF(name_fr)
-                  name_it = item[:name_it] + " " + item[:desc_it].strip + " " + package[:desc_it] if package && package[:desc_it]
-                  name_it ||= @refdata[pkg_gtin] ? @refdata[pkg_gtin][:desc_it] : nil
-                  # Zugelassenen Packungen has only german names
-                  name_it ||= (obj[:name_it] + ", " + obj[:desc_it]).strip if obj[:name_it]
-                  # ZuRorse has only german names
-                  name_it ||= (item[:name_it] + ", " + item[:desc_it]) if item
-                  xml.DSCRI(name_it)
                   if obj[:company_name] || obj[:company_ean]
                     xml.COMP do # Manufacturer
                       xml.NAME obj[:company_name][0..99] # limit to 100 chars as in XSD
@@ -1570,10 +1562,10 @@ module Oddb2xml
                       measure = info.pkg_size
                     end
                     xml.MEASURE measure
+                    xml.MEASUREF measure
                     # Die Darreichungsform dieses Items. zB Tablette(n) oder Spritze(n)
                     xml.DOSAGE_FORM info.galenic_form.descriptions["de"] if info.galenic_form.descriptions["de"]
                     xml.DOSAGE_FORMF info.galenic_form.descriptions["fr"] if info.galenic_form.descriptions["fr"]
-                    xml.DOSAGE_FORMI info.galenic_form.descriptions["it"] if info.galenic_form.descriptions["it"]
                   end
                   xml.SL_ENTRY "true" if sl_gtins.index(pkg_gtin)
                   xml.IKSCAT package[:swissmedic_category][0] if package[:swissmedic_category] && package[:swissmedic_category].length > 0
@@ -1641,8 +1633,7 @@ module Oddb2xml
                 emit_salecd(xml, ean13, obj)
                 description = obj[:desc_de] || obj[:description] # for description for zur_rose
                 xml.DSCR(description)
-                xml.DSCRF(obj[:desc_fr])
-                xml.DSCRI(obj[:desc_it]) if obj[:desc_it] && !obj[:desc_it].empty?
+                xml.DSCRF(obj[:desc_fr] || "--missing--")
                 if obj[:company_ean] && !obj[:company_ean].empty?
                   xml.COMP do
                     xml.GLN obj[:company_ean]
@@ -1754,12 +1745,10 @@ module Oddb2xml
                   else
                     sequence[:desc_de]
                   end
-                  name_fr ||= (ppac && ppac[:sequence_name])
                   name_fr = "#{sequence[:name_fr]} #{sequence[:desc_fr]}".strip if sequence[:name_fr]
-                  name_it = "#{sequence[:name_it]} #{sequence[:desc_it]}".strip if sequence[:name_it]
+                  name_fr ||= (ppac && ppac[:sequence_name])
                   override(xml, prodno, :DSCR, name_de.strip)
                   override(xml, prodno, :DSCRF, name_fr.strip)
-                  override(xml, prodno, :DSCRI, name_it.strip) if name_it && !name_it.empty?
                   # use overriden ATC if possibel
                   atc = sequence[:atc] || sequence[:atc_code]
                   xml.ATC atc if atc && !atc.empty?
@@ -1805,8 +1794,7 @@ module Oddb2xml
                 xml.comment "Chapter70 2 hack" if lim[:chap70]
                 xml.LIMNAMEBAG lim[:code] # original LIMCD
                 xml.DSCR Oddb2xml.html_decode(lim[:desc_de])
-                xml.DSCRF Oddb2xml.html_decode(lim[:desc_fr]) if lim[:desc_fr]
-                xml.DSCRI Oddb2xml.html_decode(lim[:desc_it]) if lim[:desc_it]
+                xml.DSCRF Oddb2xml.html_decode(lim[:desc_fr])
                 xml.LIMITATION_PTS(lim[:value].to_s.length > 1 ? lim[:value] : 1)
               end
             end
