@@ -7,7 +7,7 @@ PATH
       mechanize
       minitar
       multi_json
-      nokogiri (>= 1.8.2)
+      nokogiri
       optimist
       ox
       parslet
@@ -68,7 +68,7 @@ GEM
     method_source (1.0.0)
     mime-types (3.5.1)
       mime-types-data (~> 3.2015)
-    mime-types-data (3.2023.0808)
+    mime-types-data (3.2023.1003)
     mini_portile2 (2.8.4)
     minitar (0.9)
     multi_json (1.15.0)
@@ -83,7 +83,7 @@ GEM
     optimist (3.1.0)
     ox (2.14.17)
     parallel (1.23.0)
-    parser (3.2.2.3)
+    parser (3.2.2.4)
       ast (~> 2.4.1)
       racc
     parslet (2.0.0)
@@ -96,7 +96,6 @@ GEM
     pry-doc (1.4.0)
       pry (~> 0.11)
       yard (~> 0.9.11)
-    psych (3.3.4)
     public_suffix (5.0.3)
     racc (1.7.1)
     rack (3.0.8)
@@ -198,7 +197,6 @@ DEPENDENCIES
   oddb2xml!
   pry-byebug
   pry-doc
-  psych (< 4.0.0)
   rake
   rdoc (~> 6.3.3)
   rspec

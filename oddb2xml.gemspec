@@ -23,7 +23,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency "rubyzip" # , '~> 1.1.3'
   spec.add_dependency "minitar" # , '~> 0.5.2'
   spec.add_dependency "mechanize" # , '~> 2.5.1'
-  spec.add_dependency "nokogiri", ">= 1.8.2"
+  spec.add_dependency "nokogiri"
   spec.add_dependency "savon" , '~> 2.12.0'
   spec.add_dependency "spreadsheet" # , '~> 1.0.0'
   spec.add_dependency "rubyXL", "~> 3.4.0"
@@ -48,5 +48,4 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "vcr"
   spec.add_development_dependency "timecop"
   spec.add_development_dependency "flexmock"
-  spec.add_development_dependency "psych", "< 4.0.0"
 end
