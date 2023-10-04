@@ -7,12 +7,10 @@
   # https://devenv.sh/packages/
   packages = [ pkgs.git pkgs.libyaml ];
 
-  # https://devenv.sh/scripts/
-  scripts.hello.exec = "echo hello from $GREET";
-
   enterShell = ''
-    hello
+    echo This is the devenv shell for oddb2xml
     git --version
+    ruby --version
   '';
 
   # https://devenv.sh/languages/
