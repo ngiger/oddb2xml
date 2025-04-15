@@ -112,7 +112,7 @@ VCR.configure do |config|
   config.hook_into :webmock
   config.debug_logger = File.open(File.join(File.dirname(File.dirname(__FILE__)), "vcr.log"), "w+")
   config.debug_logger.sync = true
-  config.default_cassette_options = {record: :once, # ARGV.join(' ').index('downloader_spec') ? :new_episodes : :once ,
+  config.default_cassette_options = {record: :new_episodes, # ARGV.join(' ').index('downloader_spec') ? :new_episodes : :once ,
                                      preserve_exact_body_bytes: true,
                                      allow_playback_repeats: true,
                                      serialize_with: :json,
@@ -256,7 +256,7 @@ def mock_downloads
    "http://pillbox.oddb.org/TRANSFER.ZIP" => "transfer.zip",
    "https://github.com/zdavatz/cpp2sqlite/blob/master/input/atc_codes_multi_lingual.txt" => "atc.csv",
    "https://raw.githubusercontent.com/zdavatz/oddb2xml_files/master/LPPV.txt" => "oddb2xml_files_lppv.txt",
-   "http://www.xn--spezialittenliste-yqb.ch/File.axd?file=XMLPublications.zip" => "XMLPublications.zip",
+   "https://www.xn--spezialittenliste-yqb.ch/File.axd?file=XMLPublications.zip" => "XMLPublications.zip",
    #      'http://refdatabase.refdata.ch/Service/Article.asmx?WSDL' => 'refdata_Pharma.xml
    "http://www.spezialitaetenliste.ch/varia_De.htm" => "varia_De.htm"}.each do |url, file|
     inhalt = File.read(File.join(Oddb2xml::SpecData, file))

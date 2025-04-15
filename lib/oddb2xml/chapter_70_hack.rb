@@ -32,7 +32,7 @@ module Oddb2xml
       @@items
     end
 
-    def self.parse(html_file = "http://www.spezialitaetenliste.ch/varia_De.htm")
+    def self.parse(html_file = "https://www.spezialitaetenliste.ch/varia_De.htm")
       data = Hash.new { |h, k| h[k] = [] }
       Ox.default_options = {
         mode: :generic,
