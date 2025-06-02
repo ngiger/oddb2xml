@@ -1,0 +1,35 @@
+# This workflow uses actions that are not certified by GitHub.
+# They are provided by a third-party and are governed by
+# separate terms of service, privacy policy, and support
+# documentation.
+# This workflow will download a prebuilt Ruby version, install dependencies and run tests with Rake
+# For more information see: https://github.com/marketplace/actions/setup-ruby-jruby-and-truffleruby
+
+name: "Build Artikelstamm"
+
+on:
+  push:
+    branches: [ master, '*' ]
+  pull_request:
+    branches: [ master ]
+  schedule:
+    # * is a special character in YAML so you have to quote this string
+    # build the artikelstamm on the first of each month at 9AM
+    - cron: "9 0 1 * *"
+
+jobs:
+  build_artikelstamm:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+    env:
+      BUNDLE_PATH: ".bundle/gems"
+      BUNDLE_WITHOUT: "debug"
+    steps:
+    - uses: actions/checkout@v4
+    - uses: ruby/setup-ruby@v1
+      with:
+        ruby-version: "3.4"
+        bundler-cache: true
+    - name: Build Artikelstamm for Elexis
+      run: bundle exec ruby bin/oddb2xml --artikelstamm --firstbase

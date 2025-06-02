@@ -5,7 +5,7 @@
 # This workflow will download a prebuilt Ruby version, install dependencies and run tests with Rake
 # For more information see: https://github.com/marketplace/actions/setup-ruby-jruby-and-truffleruby
 
-name: Test
+name: "Run RSpec tests"
 
 on:
   push:
@@ -14,7 +14,7 @@ on:
     branches: [ master ]
 
 jobs:
-  test:
+  rspec_test:
     runs-on: ubuntu-latest
 # Using a matrix fails, because /setup-ruby always invokes bundle install without any additional args
 # Fixed by adding not defining the debugger group in the Gemfile
@@ -22,12 +22,12 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu]
-        ruby: ["3.0", "3.1", "3.2", "3.3", "3.4"]
+        ruby: ["3.1", "3.2", "3.3", "3.4"]
     env:
       BUNDLE_PATH: ".bundle/gems"
       BUNDLE_WITHOUT: "debugger"
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v4
     - uses: ruby/setup-ruby@v1
       with:
         ruby-version: ${{ matrix.ruby }}

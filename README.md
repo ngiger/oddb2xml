@@ -106,7 +106,7 @@ FR
 
 ## Supported ruby version
 
-We run tests on travis-ci.org for the Ruby versions mentioned in the .travis.yml file. You will need ruby > 2.5 to work correctly.
+We run tests on github for the Ruby versions mentioned in the .github/workflows/ruby.ymlfile. You will need ruby >= 3.1.0 to work correctly.
 Look at the github actions to see the spec test results. We ignore errors against ruby head, as it is sometimes unstable.
 
 
